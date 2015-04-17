@@ -44,6 +44,9 @@ colnames(aggdataDownstream) <- c("River",  "Number", "Stream")
 aggdata <- rbind(aggdataUpstream,aggdataDownstream)
 diff_media <-aggregate(Difference~River, data = dados, FUN = "mean" )
 
+# aggdata$Stream<-as.factor(aggdata$Stream)
+# t<- t.test(Number~Stream,data=aggdata,paired=T)
+
 # Perform paired t-test
 t <- t.test(diff_media$Difference)
 
