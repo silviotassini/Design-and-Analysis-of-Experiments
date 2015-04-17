@@ -1,6 +1,6 @@
 ---
 title: "Estudo de Caso 03"
-author: "Alexandre Moraes Tannus e SÃ­lvio R. Tassini Borges"
+author: "Alexandre Moraes Tannus e Sílvio R. Tassini Borges"
 output: pdf_document
 ---
 ```{r, prog,echo=FALSE,warning=FALSE, autodep=TRUE, message=FALSE }
@@ -62,37 +62,41 @@ ss <- power.t.test(power = beta,
                    alternative = "two.sided")
 
 normal <- shapiro.test(diff_media$Difference)
+
 indep <- dwtest(dados$Difference~dados$River)
 ```
 
-##SumÃ¡rio
+##Sumário
 
 Para avaliar o efeito do despejo de esgoto em rios um ecologista enviou alunos 
-de pÃ³s graduaÃ§Ã£o para examinar a diversidade de espÃ©cies de invertebrados nestes 
-rios. Para tal fim os alunos colheram amostras de 100 litros de Ã¡gua em pontos 
+de pós graduação para examinar a diversidade de espécies de invertebrados nestes 
+rios. Para tal fim os alunos coletaram amostras de 100 litros de água em pontos 
 distantes de 100 metros do local de despejo, tanto acima como abaixo do local. 
-Foram colhidas 10 amostras de 7 rios entre os meses de fevereiro e novembro, sendo 
-uma amostra por mÃªs. O interesse do pesquisador Ã© saber se o despejo de esgoto
-afeta o nÃºmero mÃ©dio de espÃ©cies presentes no rio.
+Foram coletadas 10 amostras de 7 rios entre os meses de fevereiro e novembro, sendo 
+uma amostra por mês. O interesse do pesquisador é saber se o despejo de esgoto
+afeta o número médio de espécies presentes no rio.
 
-##AnÃ¡lise ExploratÃ³ria dos dados
 
-Em uma anÃ¡lise prÃ©via Ã© possÃ­vel notar que existe uma tendÃªncia de queda no nÃºmero 
-de espÃ©cies de invertebrados quando sÃ£o comparadas as amostras colhidas acima do 
-local de despejo de esgoto com as colhidas abaixo.
+##Análise Exploratória dos dados
 
-```{r, echo=FALSE, fig.height=2.8, fig.cap="Figura 1 - NÃºmero de espÃ©cies por rio"}
+Em uma análise prévia é possível notar que existe uma tendência de queda no número 
+de espécies de invertebrados quando são comparadas as amostras coletadas acima do 
+local de despejo de esgoto com as coletadas abaixo.
+
+```{r, echo=FALSE, fig.height=2.8, fig.cap="Figura 1 - Número de espécies por rio"}
 # Rio A
 mes <- c("Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov")
+
 plot( x = 2:11, y=dados[dados$River=="A",2], col = "red", 
       type = 'l', xlab = "", ylab="", 
       main = "Rio A",
       ylim=c(0,max(dados[,2:3])))
 par(new=T)
 plot( x = 2:11, y=dados[dados$River=="A",3], col = "blue", 
-      type = 'l', xlab = "MÃªs", ylab="NÃºmero de espÃ©cies", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
       ylim=c(0,max(dados[,2:3])))
-
+legend('bottomright', c("Acima","Abaixo") , 
+       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
 # Rio B
 plot( x = 2:11, y=dados[dados$River=="B",2], col = "red", 
       type = 'l', xlab = "", ylab="", 
@@ -100,9 +104,10 @@ plot( x = 2:11, y=dados[dados$River=="B",2], col = "red",
       ylim=c(0,max(dados[,2:3])))
 par(new=T)
 plot( x = 2:11, y=dados[dados$River=="B",3], col = "blue", 
-      type = 'l', xlab = "MÃªs", ylab="NÃºmero de espÃ©cies", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
       ylim=c(0,max(dados[,2:3])))
-
+legend('bottomright', c("Acima","Abaixo") , 
+       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
 # Rio C
 plot( x = 2:11, y=dados[dados$River=="C",2], col = "red", 
       type = 'l', xlab = "", ylab="", 
@@ -110,9 +115,10 @@ plot( x = 2:11, y=dados[dados$River=="C",2], col = "red",
       ylim=c(0,max(dados[,2:3])))
 par(new=T)
 plot( x = 2:11, y=dados[dados$River=="C",3], col = "blue", 
-      type = 'l', xlab = "MÃªs", ylab="NÃºmero de espÃ©cies", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
       ylim=c(0,max(dados[,2:3])))
-
+legend('topright', c("Acima","Abaixo") , 
+       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
 # Rio D
 plot( x = 2:11, y=dados[dados$River=="D",2], col = "red", 
       type = 'l', xlab = "", ylab="", 
@@ -120,9 +126,10 @@ plot( x = 2:11, y=dados[dados$River=="D",2], col = "red",
       ylim=c(0,max(dados[,2:3])))
 par(new=T)
 plot( x = 2:11, y=dados[dados$River=="D",3], col = "blue", 
-      type = 'l', xlab = "MÃªs", ylab="NÃºmero de espÃ©cies", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
       ylim=c(0,max(dados[,2:3])))
-
+legend('topright', c("Acima","Abaixo") , 
+       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
 # Rio E
 plot( x = 2:11, y=dados[dados$River=="E",2], col = "red", 
       type = 'l', xlab = "", ylab="", 
@@ -130,19 +137,21 @@ plot( x = 2:11, y=dados[dados$River=="E",2], col = "red",
       ylim=c(0,max(dados[,2:3])))
 par(new=T)
 plot( x = 2:11, y=dados[dados$River=="E",3], col = "blue", 
-      type = 'l', xlab = "MÃªs", ylab="NÃºmero de espÃ©cies", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
       ylim=c(0,max(dados[,2:3])))
-
+legend('bottomright', c("Acima","Abaixo") , 
+       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
 # Rio F
 plot( x = 2:11, y=dados[dados$River=="F",2], col = "red", 
       type = 'l', xlab = "", ylab="", 
       ylim=c(0,max(dados[,2:3])))
 par(new=T)
 plot( x = 2:11, y=dados[dados$River=="F",3], col = "blue", 
-      type = 'l', xlab = "MÃªs", ylab="NÃºmero de espÃ©cies", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
       main = "Rio F",
       ylim=c(0,max(dados[,2:3])))
-
+legend('bottomright', c("Acima","Abaixo") , 
+       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
 # Rio G
 plot( x = 2:11, y=dados[dados$River=="G",2], col = "red", 
       type = 'l', xlab = "", ylab="",
@@ -150,18 +159,20 @@ plot( x = 2:11, y=dados[dados$River=="G",2], col = "red",
       ylim=c(0,max(dados[,2:3])))
 par(new=T)
 plot( x = 2:11, y=dados[dados$River=="G",3], col = "blue", 
-      type = 'l', xlab = "MÃªs", ylab="NÃºmero de espÃ©cies", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
       ylim=c(0,max(dados[,2:3])))
+legend('topright', names(dados)[2:3] , 
+       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
 
 ```
 
 ## Planejamento Experimental
 
-O objetivo do experimento Ã© verificar se o despejo de esgoto em rios afeta o 
-nÃºmero mÃ©dio de espÃ©cies. Visando realizar os testes estatÃ­sticos necessÃ¡rios foi
-definida a hipÃ³tese nula de que nÃ£o hÃ¡ diferenÃ§a entre as mÃ©dias das amostras 
-obtidas acima do local de despejo com as colhidas abaixo. Sendo assim, a hipÃ³tese 
-alternativa Ã© que tais mÃ©dias sejam diferentes entre si.
+O objetivo do experimento é verificar se o despejo de esgoto em rios afeta o 
+número médio de espécies. Visando realizar os testes estatísticos necessários foi
+definida a hipótese nula de que não há diferença entre as médias das amostras 
+obtidas acima do local de despejo com as coletadas abaixo desse local. Sendo assim, a hipótese 
+alternativa é que tais médias sejam diferentes entre si.
 
 $$
 \begin{cases}
@@ -170,64 +181,67 @@ $$
 \end{cases}
 $$
 
-TambÃ©m foi definido um nÃ­vel de significÃ¢ncia de `r alpha*100`% ($\alpha=`r 
-alpha`$) e uma diferenÃ§a de no mÃ¡ximo `r d_star` espÃ©cies. Para verificar 
-posteriormente,caso necessÃ¡rio, se o nÃºmero de observaÃ§Ãµes foi o recomendado foi 
-definida uma potÃªncia de teste de `r beta*100`%.
+Também foi definido um nível de significância de `r alpha*100`% ($\alpha=`r 
+alpha`$) e uma diferença de no máximo `r d_star` espécies, $\delta^{*}$=`r d_star`. 
+
+A estatística de teste é dada por:
 
 $$
-\alpha = `r alpha` 
-$$
-$$
-\beta = `r beta`
-$$
-$$
-\delta^{*} = `r d_star`
+t_0=\frac{\overline d}{s_d/\sqrt(n)}
 $$
 
-## AnÃ¡lise EstatÃ­tica
+onde $\overline d$ é a média das diferenças e $s_d$ o desvio padrão dessas diferencas.
+
+A região de rejeição para o referido teste é $t_0>t_{\alpha/2,n-1}$ ou $t_0<t_{\alpha/2,n-1}$.
+
+Para verificar 
+posteriormente,caso necessário, se o número de observações foi o recomendado foi 
+definida uma potência de teste de `r beta*100`%, $\beta = `r beta`$.
+
+## Análise Estatítica
 
 ### Teste T
 Foi realizado um teste T pareado, cujo resultado foi um *p-valor* de `r t$p.value` 
-que indica que, para um nÃ­vel de confianÃ§a de `r (1-alpha)*100`%, a hipÃ³tese nula
-nÃ£o pode ser rejeitada
-A mÃ©dia calculada foi de `r t$estimate`, com desvio padrÃ£o de `r round(dp,4)` e 
-intervalo de confianÃ§a entre `r round(t$conf.int[[1]],4)` e 
+que indica que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula
+não pode ser rejeitada
+A média calculada foi de `r t$estimate`, com desvio padrão de `r round(dp,4)` e 
+intervalo de confiança entre `r round(t$conf.int[[1]],4)` e 
 `r round(t$conf.int[[2]],digits=4)`.
 
-### NÃºmero de amostras necessÃ¡rias
+### Número de amostras necessárias
 
-A potÃªncia do teste para as condiÃ§Ãµes estabelecidas de $\delta^{*}=`r d_star`$, 
-$\alpha = `r alpha`$ e desvio padrÃ£o calculado de `r round(dp,4)` foi estimada 
+A potência do teste para as condições estabelecidas de $\delta^{*}=`r d_star`$, 
+$\alpha = `r alpha`$ e desvio padrão calculado de `r round(dp,4)` foi estimada 
 em `r round(p1$power*100,4)`%.
 
-Para alcanÃ§ar uma potÃªncia de $\beta = `r beta*100`$% seriam necessÃ¡rias amostras de 
+Para alcançar uma potência de $\beta = `r beta*100`$% seriam necessárias amostras de 
 `r ceiling(ss$n)` rios. 
 
-##VerificaÃ§Ã£o das premissas
+##Verificação das premissas
 
 ###Normalidade
 
-A premissa de normalidade pode ser avaliada atravÃ©s do teste de Shapiro-Wilk. 
-Utilizando as amostras obtidas, o resultado foi um *p-valor* de 
-`r round(normal$p.value,4)`, que indica que os dados seguem uma distribuiÃ§Ã£o 
-normal, como pode ser visto no grÃ¡fico
+A premissa de normalidade pode ser avaliada através do teste de Shapiro-Wilk. 
+Utilizando as amostras obtidas, o resultado do teste foi um *p-valor* de 
+`r round(normal$p.value,4)`, que indica que os dados seguem uma distribuição 
+normal, como pode ser visto no gráfico.
 
 ```{r, echo=FALSE}
 
 qqPlot(diff_media$Difference,
        pch=16,
        cex=1.5,
-       las=1)
+       las=1,
+       ylab="Diferença entre medidas")
 
 ```
 
 
-###IndependÃªncia
+###Independência
 
-Para avaliar a premissa de independÃªncia das variÃ¡veis foi realizado o teste de 
-Durbin-Watson sobre a diferenÃ§a entre as amostras obtidas acima e abaixo do local 
+Para avaliar a premissa de independência das variáveis foi realizado o teste de 
+Durbin-Watson sobre a diferença entre as amostras obtidas acima e abaixo do local 
 de despejo. O resultado foi um *p-valor* de `r round(indep$p.value,4)`, que prova
-a independÃªncia entre as amostras.
+a independência entre as amostras.
 
-##ConclusÃ£o
+##Conclusão
