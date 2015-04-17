@@ -31,7 +31,7 @@ dados <- read.csv("riverbio.csv")
 
 colnames(dados)[1] <- "River"
 
-dados[,4] <- dados$Upstream - dados$Downstream
+dados[,4] <- dados$Downstream - dados$Upstream 
 colnames(dados)[4] <- "Difference"
 
 aggdataUpstream <- aggregate(Upstream~River, data = dados, FUN=mean )
@@ -201,8 +201,8 @@ definida uma potência de teste de `r beta*100`%, $\beta = `r beta`$.
 ## Análise Estatítica
 
 ### Teste T
-Foi realizado um teste T pareado, cujo resultado foi um *p-valor* de `r t$p.value` 
-que indica que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula
+Foi realizado um teste T pareado e o valor *t* observado de `r t$statistic` , note que o valor é negativo porque a mudança média observada foi a redução de espécies. O teste forneceu um *p-valor* de `r t$p.value` 
+indicador que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula
 não pode ser rejeitada
 A média calculada foi de `r t$estimate`, com desvio padrão de `r round(dp,4)` e 
 intervalo de confiança entre `r round(t$conf.int[[1]],4)` e 
@@ -210,9 +210,8 @@ intervalo de confiança entre `r round(t$conf.int[[1]],4)` e
 
 ### Número de amostras necessárias
 
-A potência do teste para as condições estabelecidas de $\delta^{*}=`r d_star`$, 
-$\alpha = `r alpha`$ e desvio padrão calculado de `r round(dp,4)` foi estimada 
-em `r round(p1$power*100,4)`%.
+A potência do teste para as condições estabelecidas a fim de detectar uma diferença de $\delta^{*}=`r d_star`$ entre as hipóteses nula e alternativa foi estimada 
+em `r round(p1$power*100,4)`%, dado $\alpha = `r alpha`$  e desvio padrão calculado de `r round(dp,4)` .
 
 Para alcançar uma potência de $\beta = `r beta*100`$% seriam necessárias amostras de 
 `r ceiling(ss$n)` rios. 
@@ -236,12 +235,5 @@ qqPlot(diff_media$Difference,
 
 ```
 
-
-###Independência
-
-Para avaliar a premissa de independência das variáveis foi realizado o teste de 
-Durbin-Watson sobre a diferença entre as amostras obtidas acima e abaixo do local 
-de despejo. O resultado foi um *p-valor* de `r round(indep$p.value,4)`, que prova
-a independência entre as amostras.
 
 ##Conclusão
