@@ -1,0 +1,233 @@
+---
+title: "Estudo de Caso 03"
+author: "Alexandre Moraes Tannus e Sílvio R. Tassini Borges"
+output: pdf_document
+---
+```{r, prog,echo=FALSE,warning=FALSE, autodep=TRUE, message=FALSE }
+
+if (!require(GGally, quietly = TRUE)){
+      install.packages("GGally")
+      }
+if (!require(car, quietly = TRUE)){
+      install.packages("car")
+      }
+if (!require(lsr, quietly = TRUE)){
+      install.packages("lsr")
+      }
+if (!require(lmtest, quietly = TRUE)){
+      install.packages("lmtest")
+      }
+library(GGally,quietly = T, warn.conflicts = F) 
+library(car,quietly = T, warn.conflicts = F) 
+library(lsr,quietly = T, warn.conflicts = F) 
+library(lmtest, quietly = T, warn.conflicts = F)
+
+## Estudo de caso 03 
+
+alpha <- 0.05
+beta <- 0.90
+d_star <- 3
+dados <- read.csv("riverbio.csv")
+
+colnames(dados)[1] <- "River"
+
+dados[,4] <- dados$Upstream - dados$Downstream
+colnames(dados)[4] <- "Difference"
+
+aggdataUpstream <- aggregate(Upstream~River, data = dados, FUN=mean )
+aggdataUpstream[,3]="Up"
+colnames(aggdataUpstream) <- c("River",  "Number", "Stream")
+aggdataDownstream <- aggregate(Downstream~River, data = dados, FUN=mean )
+aggdataDownstream[,3]="Down"
+colnames(aggdataDownstream) <- c("River",  "Number", "Stream")
+
+aggdata <- rbind(aggdataUpstream,aggdataDownstream)
+diff_media <-aggregate(Difference~River, data = dados, FUN = "mean" )
+
+# Perform paired t-test
+t <- t.test(diff_media$Difference)
+
+dp <- sd(diff_media$Difference)
+
+p1 <- power.t.test(n = 7, 
+                   sd = dp,
+                   delta = d_star,
+                   sig.level = 0.05, 
+                   alternative = "two.sided")
+
+ss <- power.t.test(power = beta, 
+                   sd = sd(diff_media$Difference),
+                   delta = d_star,
+                   sig.level = alpha, 
+                   alternative = "two.sided")
+
+normal <- shapiro.test(diff_media$Difference)
+indep <- dwtest(dados$Difference~dados$River)
+```
+
+##Sumário
+
+Para avaliar o efeito do despejo de esgoto em rios um ecologista enviou alunos 
+de pós graduação para examinar a diversidade de espécies de invertebrados nestes 
+rios. Para tal fim os alunos colheram amostras de 100 litros de água em pontos 
+distantes de 100 metros do local de despejo, tanto acima como abaixo do local. 
+Foram colhidas 10 amostras de 7 rios entre os meses de fevereiro e novembro, sendo 
+uma amostra por mês. O interesse do pesquisador é saber se o despejo de esgoto
+afeta o número médio de espécies presentes no rio.
+
+##Análise Exploratória dos dados
+
+Em uma análise prévia é possível notar que existe uma tendência de queda no número 
+de espécies de invertebrados quando são comparadas as amostras colhidas acima do 
+local de despejo de esgoto com as colhidas abaixo.
+
+```{r, echo=FALSE, fig.height=2.8, fig.cap="Figura 1 - Número de espécies por rio"}
+# Rio A
+mes <- c("Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov")
+plot( x = 2:11, y=dados[dados$River=="A",2], col = "red", 
+      type = 'l', xlab = "", ylab="", 
+      main = "Rio A",
+      ylim=c(0,max(dados[,2:3])))
+par(new=T)
+plot( x = 2:11, y=dados[dados$River=="A",3], col = "blue", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
+      ylim=c(0,max(dados[,2:3])))
+
+# Rio B
+plot( x = 2:11, y=dados[dados$River=="B",2], col = "red", 
+      type = 'l', xlab = "", ylab="", 
+      main = "Rio B",
+      ylim=c(0,max(dados[,2:3])))
+par(new=T)
+plot( x = 2:11, y=dados[dados$River=="B",3], col = "blue", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
+      ylim=c(0,max(dados[,2:3])))
+
+# Rio C
+plot( x = 2:11, y=dados[dados$River=="C",2], col = "red", 
+      type = 'l', xlab = "", ylab="", 
+      main = "Rio C",
+      ylim=c(0,max(dados[,2:3])))
+par(new=T)
+plot( x = 2:11, y=dados[dados$River=="C",3], col = "blue", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
+      ylim=c(0,max(dados[,2:3])))
+
+# Rio D
+plot( x = 2:11, y=dados[dados$River=="D",2], col = "red", 
+      type = 'l', xlab = "", ylab="", 
+      main = "Rio D",
+      ylim=c(0,max(dados[,2:3])))
+par(new=T)
+plot( x = 2:11, y=dados[dados$River=="D",3], col = "blue", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
+      ylim=c(0,max(dados[,2:3])))
+
+# Rio E
+plot( x = 2:11, y=dados[dados$River=="E",2], col = "red", 
+      type = 'l', xlab = "", ylab="", 
+      main = "Rio E",
+      ylim=c(0,max(dados[,2:3])))
+par(new=T)
+plot( x = 2:11, y=dados[dados$River=="E",3], col = "blue", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
+      ylim=c(0,max(dados[,2:3])))
+
+# Rio F
+plot( x = 2:11, y=dados[dados$River=="F",2], col = "red", 
+      type = 'l', xlab = "", ylab="", 
+      ylim=c(0,max(dados[,2:3])))
+par(new=T)
+plot( x = 2:11, y=dados[dados$River=="F",3], col = "blue", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
+      main = "Rio F",
+      ylim=c(0,max(dados[,2:3])))
+
+# Rio G
+plot( x = 2:11, y=dados[dados$River=="G",2], col = "red", 
+      type = 'l', xlab = "", ylab="",
+      main = "Rio G", 
+      ylim=c(0,max(dados[,2:3])))
+par(new=T)
+plot( x = 2:11, y=dados[dados$River=="G",3], col = "blue", 
+      type = 'l', xlab = "Mês", ylab="Número de espécies", 
+      ylim=c(0,max(dados[,2:3])))
+
+```
+
+## Planejamento Experimental
+
+O objetivo do experimento é verificar se o despejo de esgoto em rios afeta o 
+número médio de espécies. Visando realizar os testes estatísticos necessários foi
+definida a hipótese nula de que não há diferença entre as médias das amostras 
+obtidas acima do local de despejo com as colhidas abaixo. Sendo assim, a hipótese 
+alternativa é que tais médias sejam diferentes entre si.
+
+$$
+\begin{cases}
+  H_0: & \mu_{D} = 0 \\
+  H_1: & \mu_{D} \neq 0
+\end{cases}
+$$
+
+Também foi definido um nível de significância de `r alpha*100`% ($\alpha=`r 
+alpha`$) e uma diferença de no máximo `r d_star` espécies. Para verificar 
+posteriormente,caso necessário, se o número de observações foi o recomendado foi 
+definida uma potência de teste de `r beta*100`%.
+
+$$
+\alpha = `r alpha` 
+$$
+$$
+\beta = `r beta`
+$$
+$$
+\delta^{*} = `r d_star`
+$$
+
+## Análise Estatítica
+
+### Teste T
+Foi realizado um teste T pareado, cujo resultado foi um *p-valor* de `r t$p.value` 
+que indica que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula
+não pode ser rejeitada
+A média calculada foi de `r t$estimate`, com desvio padrão de `r round(dp,4)` e 
+intervalo de confiança entre `r round(t$conf.int[[1]],4)` e 
+`r round(t$conf.int[[2]],digits=4)`.
+
+### Número de amostras necessárias
+
+A potência do teste para as condições estabelecidas de $\delta^{*}=`r d_star`$, 
+$\alpha = `r alpha`$ e desvio padrão calculado de `r round(dp,4)` foi estimada 
+em `r round(p1$power*100,4)`%.
+
+Para alcançar uma potência de $\beta = `r beta*100`$% seriam necessárias amostras de 
+`r ceiling(ss$n)` rios. 
+
+##Verificação das premissas
+
+###Normalidade
+
+A premissa de normalidade pode ser avaliada através do teste de Shapiro-Wilk. 
+Utilizando as amostras obtidas, o resultado foi um *p-valor* de 
+`r round(normal$p.value,4)`, que indica que os dados seguem uma distribuição 
+normal, como pode ser visto no gráfico
+
+```{r, echo=FALSE}
+
+qqPlot(diff_media$Difference,
+       pch=16,
+       cex=1.5,
+       las=1)
+
+```
+
+
+###Independência
+
+Para avaliar a premissa de independência das variáveis foi realizado o teste de 
+Durbin-Watson sobre a diferença entre as amostras obtidas acima e abaixo do local 
+de despejo. O resultado foi um *p-valor* de `r round(indep$p.value,4)`, que prova
+a independência entre as amostras.
+
+##Conclusão
