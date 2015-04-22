@@ -48,14 +48,16 @@ diff_media <-aggregate(Difference~River, data = dados, FUN = "mean" )
 # t<- t.test(Number~Stream,data=aggdata,paired=T)
 
 # Perform paired t-test
-t <- t.test(diff_media$Difference)
+# t <- t.test(diff_media$Difference)
+
+t<-t.test(dados$Downstream, dados$Upstream,mu=0,alt="two.sided",paired=T)
 
 dp <- sd(diff_media$Difference)
 
 p1 <- power.t.test(n = 7, 
-                   sd = dp,
-                   delta = d_star,
-                   sig.level = 0.05, 
+                   sd = dp,                   
+                   delta = d_star, 
+                   sig.level=alpha,
                    alternative = "two.sided")
 
 ss <- power.t.test(power = beta, 
@@ -86,87 +88,19 @@ Em uma análise prévia é possível notar que existe uma tendência de queda no núme
 de espécies de invertebrados quando são comparadas as amostras coletadas acima do 
 local de despejo de esgoto com as coletadas abaixo.
 
-```{r, echo=FALSE, fig.height=2.8, fig.cap="Figura 1 - Número de espécies por rio"}
-# Rio A
-mes <- c("Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov")
+```{r, echo=FALSE, fig.height=3.8, fig.cap="Figura 1 - Número de espécies por rio"}
 
-plot( x = 2:11, y=dados[dados$River=="A",2], col = "red", 
-      type = 'l', xlab = "", ylab="", 
-      main = "Rio A",
-      ylim=c(0,max(dados[,2:3])))
-par(new=T)
-plot( x = 2:11, y=dados[dados$River=="A",3], col = "blue", 
-      type = 'l', xlab = "Mês", ylab="Número de espécies", 
-      ylim=c(0,max(dados[,2:3])))
-legend('bottomright', c("Acima","Abaixo") , 
-       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
-# Rio B
-plot( x = 2:11, y=dados[dados$River=="B",2], col = "red", 
-      type = 'l', xlab = "", ylab="", 
-      main = "Rio B",
-      ylim=c(0,max(dados[,2:3])))
-par(new=T)
-plot( x = 2:11, y=dados[dados$River=="B",3], col = "blue", 
-      type = 'l', xlab = "Mês", ylab="Número de espécies", 
-      ylim=c(0,max(dados[,2:3])))
-legend('bottomright', c("Acima","Abaixo") , 
-       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
-# Rio C
-plot( x = 2:11, y=dados[dados$River=="C",2], col = "red", 
-      type = 'l', xlab = "", ylab="", 
-      main = "Rio C",
-      ylim=c(0,max(dados[,2:3])))
-par(new=T)
-plot( x = 2:11, y=dados[dados$River=="C",3], col = "blue", 
-      type = 'l', xlab = "Mês", ylab="Número de espécies", 
-      ylim=c(0,max(dados[,2:3])))
-legend('topright', c("Acima","Abaixo") , 
-       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
-# Rio D
-plot( x = 2:11, y=dados[dados$River=="D",2], col = "red", 
-      type = 'l', xlab = "", ylab="", 
-      main = "Rio D",
-      ylim=c(0,max(dados[,2:3])))
-par(new=T)
-plot( x = 2:11, y=dados[dados$River=="D",3], col = "blue", 
-      type = 'l', xlab = "Mês", ylab="Número de espécies", 
-      ylim=c(0,max(dados[,2:3])))
-legend('topright', c("Acima","Abaixo") , 
-       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
-# Rio E
-plot( x = 2:11, y=dados[dados$River=="E",2], col = "red", 
-      type = 'l', xlab = "", ylab="", 
-      main = "Rio E",
-      ylim=c(0,max(dados[,2:3])))
-par(new=T)
-plot( x = 2:11, y=dados[dados$River=="E",3], col = "blue", 
-      type = 'l', xlab = "Mês", ylab="Número de espécies", 
-      ylim=c(0,max(dados[,2:3])))
-legend('bottomright', c("Acima","Abaixo") , 
-       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
-# Rio F
-plot( x = 2:11, y=dados[dados$River=="F",2], col = "red", 
-      type = 'l', xlab = "", ylab="", 
-      ylim=c(0,max(dados[,2:3])))
-par(new=T)
-plot( x = 2:11, y=dados[dados$River=="F",3], col = "blue", 
-      type = 'l', xlab = "Mês", ylab="Número de espécies", 
-      main = "Rio F",
-      ylim=c(0,max(dados[,2:3])))
-legend('bottomright', c("Acima","Abaixo") , 
-       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
-# Rio G
-plot( x = 2:11, y=dados[dados$River=="G",2], col = "red", 
-      type = 'l', xlab = "", ylab="",
-      main = "Rio G", 
-      ylim=c(0,max(dados[,2:3])))
-par(new=T)
-plot( x = 2:11, y=dados[dados$River=="G",3], col = "blue", 
-      type = 'l', xlab = "Mês", ylab="Número de espécies", 
-      ylim=c(0,max(dados[,2:3])))
-legend('topright', names(dados)[2:3] , 
-       lty=1, col=c('red', 'blue'), bty='n', cex=.75)
+boxplot(dados$Upstream,dados$Downstream,
+        ylab="No de Espécies",
+        xlab="Ponto de retirada da amostra",
+        names=c("Antes","Depois"))
 
+plot(dados$Upstream,dados$Downstream,
+     ylab="No Espécies depois",
+     xlab="No Espécies antes",
+     main="Dispersão entre no espécies antes e depois do ponto de despejo de esgoto")
+
+abline(lm(dados$Upstream~dados$Downstrea),col="red")
 ```
 
 ## Planejamento Experimental
@@ -184,8 +118,8 @@ $$
 \end{cases}
 $$
 
-Também foi definido um nível de significância de `r alpha*100`% ($\alpha=`r 
-alpha`$) e uma diferença de no máximo `r d_star` espécies, $\delta^{*}$=`r d_star`. 
+Também foi definido um nível de significância de `r alpha*100`% ($\alpha=`r alpha`$) e uma diferença de no máximo `r d_star` espécies, $\delta^{*}$=`r d_star`. 
+Uma vez que um mesmo individuo, no caso do estudo o rio, contribui com pares de amostras, coletadas antes e depois de um evento, a estatistica adequada para analise dos dados é o teste para amostras pareadas, pois é esperado que as observações no mesmo individuo sejam mais similares. 
 
 A estatística de teste é dada por:
 
@@ -205,28 +139,22 @@ definida uma potência de teste de `r beta*100`%, $\beta = `r beta`$.
 
 ### Teste T
 Foi realizado um teste T pareado e o valor *t* observado de `r t$statistic` , note que o valor é negativo porque a mudança média observada foi a redução de espécies. O teste forneceu um *p-valor* de `r t$p.value` 
-indicador que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula
-não pode ser rejeitada
+indicador que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula pode ser rejeitada
 A média calculada foi de `r t$estimate`, com desvio padrão de `r round(dp,4)` e 
 intervalo de confiança entre `r round(t$conf.int[[1]],4)` e 
 `r round(t$conf.int[[2]],digits=4)`.
 
 ### Número de amostras necessárias
 
-A potência do teste para as condições estabelecidas a fim de detectar uma diferença de $\delta^{*}=`r d_star`$ entre as hipóteses nula e alternativa foi estimada 
-em `r round(p1$power*100,4)`%, dado $\alpha = `r alpha`$  e desvio padrão calculado de `r round(dp,4)` .
+A potência do teste para as condições estabelecidas a fim de detectar uma diferença de $\delta^{*}=$ `r d_star` entre as hipóteses nula e alternativa foi estimada em `r round(p1$power*100,4)` %, dado $\alpha$ = `r alpha`  e desvio padrão calculado de `r round(dp,4)` .
 
-Para alcançar uma potência de $\beta = `r beta*100`$% seriam necessárias amostras de 
-`r ceiling(ss$n)` rios. 
+Para alcançar uma potência de $\beta = `r beta*100`$% seriam necessárias amostras de `r ceiling(ss$n)` rios. 
 
 ##Verificação das premissas
 
 ###Normalidade
 
-A premissa de normalidade pode ser avaliada através do teste de Shapiro-Wilk. 
-Utilizando as amostras obtidas, o resultado do teste foi um *p-valor* de 
-`r round(normal$p.value,4)`, que indica que os dados seguem uma distribuição 
-normal, como pode ser visto no gráfico.
+A premissa de normalidade pode ser avaliada através do teste de Shapiro-Wilk. Utilizando as amostras obtidas, o resultado do teste foi um *p-valor* de `r round(normal$p.value,4)`, que indica que os dados seguem uma distribuição normal, como pode ser visto no gráfico.
 
 ```{r, echo=FALSE}
 
@@ -237,6 +165,9 @@ qqPlot(diff_media$Difference,
        ylab="Diferença entre medidas")
 
 ```
+###Independência
 
+Para avaliar a premissa de independência das variáveis foi realizado o teste de Durbin-Watson sobre a diferença entre as amostras obtidas acima e abaixo do local de despejo. O resultado foi um *p-valor* de `r round(indep$p.value,4)`, que prova a independência entre as amostras.
 
 ##Conclusão
+
