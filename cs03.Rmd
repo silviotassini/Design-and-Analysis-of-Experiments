@@ -1,22 +1,22 @@
 ---
 title: "Estudo de Caso 03"
-author: "Alexandre Moraes Tannus e Sílvio R. Tassini Borges"
+author: "Alexandre Moraes Tannus e SÃ­lvio R. Tassini Borges"
 output: pdf_document
 ---
 ```{r, prog,echo=FALSE,warning=FALSE, autodep=TRUE, message=FALSE }
-
-if (!require(GGally, quietly = TRUE)){
-      install.packages("GGally")
-      }
-if (!require(car, quietly = TRUE)){
-      install.packages("car")
-      }
-if (!require(lsr, quietly = TRUE)){
-      install.packages("lsr")
-      }
-if (!require(lmtest, quietly = TRUE)){
-      install.packages("lmtest")
-      }
+# 
+# if (!require(GGally, quietly = TRUE)){
+#       install.packages("GGally")
+#       }
+# if (!require(car, quietly = TRUE)){
+#       install.packages("car")
+#       }
+# if (!require(lsr, quietly = TRUE)){
+#       install.packages("lsr")
+#       }
+# if (!require(lmtest, quietly = TRUE)){
+#       install.packages("lmtest")
+#       }
 library(GGally,quietly = T, warn.conflicts = F) 
 library(car,quietly = T, warn.conflicts = F) 
 library(lsr,quietly = T, warn.conflicts = F) 
@@ -26,7 +26,7 @@ library(lmtest, quietly = T, warn.conflicts = F)
 
 alpha <- 0.05
 beta <- 0.90
-d_star <- 3
+d_star <- 1.5
 dados <- read.csv("riverbio.csv")
 
 colnames(dados)[1] <- "River"
@@ -44,13 +44,9 @@ colnames(aggdataDownstream) <- c("River",  "Number", "Stream")
 aggdata <- rbind(aggdataUpstream,aggdataDownstream)
 diff_media <-aggregate(Difference~River, data = dados, FUN = "mean" )
 
-# aggdata$Stream<-as.factor(aggdata$Stream)
-# t<- t.test(Number~Stream,data=aggdata,paired=T)
+aggdata$Stream<-as.factor(aggdata$Stream)
+t<- t.test(Number~Stream,data=aggdata,paired=T)
 
-# Perform paired t-test
-# t <- t.test(diff_media$Difference)
-
-t<-t.test(dados$Downstream, dados$Upstream,mu=0,alt="two.sided",paired=T)
 
 dp <- sd(diff_media$Difference)
 
@@ -61,7 +57,7 @@ p1 <- power.t.test(n = 7,
                    alternative = "two.sided")
 
 ss <- power.t.test(power = beta, 
-                   sd = sd(diff_media$Difference),
+                   sd = dp,
                    delta = d_star,
                    sig.level = alpha, 
                    alternative = "two.sided")
@@ -69,92 +65,112 @@ ss <- power.t.test(power = beta,
 normal <- shapiro.test(diff_media$Difference)
 
 indep <- dwtest(dados$Difference~dados$River)
+
+meses=c("Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov")
+corBarras = c("white", "gray")
 ```
 
-##Sumário
+##SumÃ¡rio
 
 Para avaliar o efeito do despejo de esgoto em rios um ecologista enviou alunos 
-de pós graduação para examinar a diversidade de espécies de invertebrados nestes 
-rios. Para tal fim os alunos coletaram amostras de 100 litros de água em pontos 
+de pÃ³s graduaÃ§Ã£o para examinar a diversidade de espÃ©cies de invertebrados nestes 
+rios. Para tal fim os alunos coletaram amostras de 100 litros de Ã¡gua em pontos 
 distantes de 100 metros do local de despejo, tanto acima como abaixo do local. 
 Foram coletadas 10 amostras de 7 rios entre os meses de fevereiro e novembro, sendo 
-uma amostra por mês. O interesse do pesquisador é saber se o despejo de esgoto
-afeta o número médio de espécies presentes no rio.
+uma amostra por mÃªs. O interesse do pesquisador Ã© saber se o despejo de esgoto
+afeta o nÃºmero mÃ©dio de espÃ©cies presentes no rio.
 
 
-##Análise Exploratória dos dados
+##AnÃ¡lise ExploratÃ³ria dos dados
 
-Em uma análise prévia é possível notar que existe uma tendência de queda no número 
-de espécies de invertebrados quando são comparadas as amostras coletadas acima do 
-local de despejo de esgoto com as coletadas abaixo.
+Em uma anÃ¡lise prÃ©via Ã© possÃ­vel notar que existe uma tendÃªncia de queda no nÃºmero 
+de espÃ©cies de invertebrados quando sÃ£o comparadas as amostras coletadas acima do 
+local de despejo de esgoto com as coletadas abaixo .
 
-```{r, echo=FALSE, fig.height=3.8, fig.cap="Figura 1 - Número de espécies por rio"}
+SumÃ¡rio dos dados coletados.
+```{r, echo=FALSE, fig.height=4, fig.width=4}
+summary(aggdata)
 
 boxplot(dados$Upstream,dados$Downstream,
-        ylab="No de Espécies",
+        ylab="No de EspÃ©cies",
         xlab="Ponto de retirada da amostra",
+        main="Boxplot da diferenÃ§a global",
         names=c("Antes","Depois"))
+```
 
-plot(dados$Upstream,dados$Downstream,
-     ylab="No Espécies depois",
-     xlab="No Espécies antes",
-     main="Dispersão entre no espécies antes e depois do ponto de despejo de esgoto")
+```{r, echo=FALSE, fig.height=2.5, fig.width=3}
 
-abline(lm(dados$Upstream~dados$Downstrea),col="red")
+rioa<-t(data.matrix(dados[dados$River=="A",2:3]))
+colnames(rioa)<-meses
+barplot(rioa, beside = T, col = corBarras,main="Rio A")
+legend(x=1, y=40, xpd=TRUE, ncol=2, legend=c("Antes", "Depois"),fill=corBarras, bty="n")
+
+
+rioa<-t(data.matrix(dados[dados$River=="B",2:3]))
+colnames(rioa)<-meses
+barplot(rioa, beside = T, col = corBarras,main="Rio B")
+legend(x=1, y=28, xpd=TRUE, ncol=2, legend=c("Antes", "Depois"),fill=corBarras, bty="n")
+
+rioa<-t(data.matrix(dados[dados$River=="C",2:3]))
+colnames(rioa)<-meses
+barplot(rioa, beside = T, col = corBarras,main="Rio C")
+legend(x=1, y=20, xpd=TRUE, ncol=2, legend=c("Antes", "Depois"),fill=corBarras, bty="n")
+
+rioa<-t(data.matrix(dados[dados$River=="D",2:3]))
+colnames(rioa)<-meses
+barplot(rioa, beside = T, col = corBarras,main="Rio D")
+legend(x=1, y=8, xpd=TRUE, ncol=2, legend=c("Antes", "Depois"),fill=corBarras, bty="n")
+
+rioa<-t(data.matrix(dados[dados$River=="E",2:3]))
+colnames(rioa)<-meses
+barplot(rioa, beside = T, col = corBarras,main="Rio E")
+legend(x=1, y=36, xpd=TRUE, ncol=2, legend=c("Antes", "Depois"),fill=corBarras, bty="n")
+
+rioa<-t(data.matrix(dados[dados$River=="F",2:3]))
+colnames(rioa)<-meses
+barplot(rioa, beside = T, col = corBarras,main="Rio F")
+legend(x=1, y=28, xpd=TRUE, ncol=2, legend=c("Antes", "Depois"),fill=corBarras, bty="n")
+
+rioa<-t(data.matrix(dados[dados$River=="G",2:3]))
+colnames(rioa)<-meses
+barplot(rioa, beside = T, col = corBarras,main="Rio G")
+legend(x=1, y=22, xpd=TRUE, ncol=2, legend=c("Antes", "Depois"),fill=corBarras, bty="n")
 ```
 
 ## Planejamento Experimental
 
-O objetivo do experimento é verificar se o despejo de esgoto em rios afeta o 
-número médio de espécies. Visando realizar os testes estatísticos necessários foi
-definida a hipótese nula de que não há diferença entre as médias das amostras 
-obtidas acima do local de despejo com as coletadas abaixo desse local. Sendo assim, a hipótese 
-alternativa é que tais médias sejam diferentes entre si.
+O objetivo do experimento Ã© verificar se o despejo de esgoto em rios afeta o 
+nÃºmero mÃ©dio de espÃ©cies. Visando realizar os testes estatÃ­sticos necessÃ¡rios foi
+definida a hipÃ³tese nula de que nÃ£o hÃ¡ diferenÃ§a entre as mÃ©dias das amostras 
+obtidas acima do local de despejo com as coletadas abaixo desse local. Sendo assim, a hipÃ³tese 
+alternativa Ã© que tais mÃ©dias sejam diferentes entre si.
 
 $$
 \begin{cases}
-  H_0: & \mu_{D} = 0 \\
+  H_0: & \mu_{D} = 0 \\ 
   H_1: & \mu_{D} \neq 0
 \end{cases}
 $$
 
-Também foi definido um nível de significância de `r alpha*100`% ($\alpha=`r alpha`$) e uma diferença de no máximo `r d_star` espécies, $\delta^{*}$=`r d_star`. 
-Uma vez que um mesmo individuo, no caso do estudo o rio, contribui com pares de amostras, coletadas antes e depois de um evento, a estatistica adequada para analise dos dados é o teste para amostras pareadas, pois é esperado que as observações no mesmo individuo sejam mais similares. 
+TambÃ©m foi definido um nÃ­vel de significÃ£ncia de `r alpha*100`% ($\alpha=`r alpha`$) e uma diferenÃ§a de no mÃ¡ximo `r d_star` espÃ©cies, $\delta^{*}$=`r d_star`. 
+Uma vez que um mesmo individuo, no caso do estudo o rio, contribui com pares de amostras, coletadas antes e depois de um evento, a estatistica adequada para anÃ¡lise dos dados Ã© o teste para amostras pareadas, pois Ã© esperado que as observaÃ§Ãµes no mesmo individuo sejam similares. Ã‰ assumido, ainda, que as condiÃ§oes sejam homogÃªneas, ou seja, que o material despejado contenha as mesmas caracterÃ­tiscas bioquimicas, que horÃ¡rio, tempo e outras condiÃ§oes adversas tenham sido observadas durante a coleta de amostras. 
 
-A estatística de teste é dada por:
+Sendo assim a estatÃ­stica de teste escolhida Ã© dada por:
 
 $$
 t_0=\frac{\overline d}{s_d/\sqrt(n)}
 $$
 
-onde $\overline d$ é a média das diferenças e $s_d$ o desvio padrão dessas diferencas.
+onde $\overline d$ Ã© a mÃ©dia das diferenÃ§as e $s_d$ o desvio padrÃ£o dessas diferencas.
 
-A região de rejeição para o referido teste é $t_0>t_{\alpha/2,n-1}$ ou $t_0<t_{\alpha/2,n-1}$.
 
-Para verificar 
-posteriormente,caso necessário, se o número de observações foi o recomendado foi 
-definida uma potência de teste de `r beta*100`%, $\beta = `r beta`$.
+Para verificar posteriormente, caso necessÃ¡rio, se o nÃºmero de observaÃ§Ãµes foi o recomendado foi definida uma potÃªncia de teste de `r beta*100`%, $\beta = `r beta`$.
 
-## Análise Estatítica
-
-### Teste T
-Foi realizado um teste T pareado e o valor *t* observado de `r t$statistic` , note que o valor é negativo porque a mudança média observada foi a redução de espécies. O teste forneceu um *p-valor* de `r t$p.value` 
-indicador que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula pode ser rejeitada
-A média calculada foi de `r t$estimate`, com desvio padrão de `r round(dp,4)` e 
-intervalo de confiança entre `r round(t$conf.int[[1]],4)` e 
-`r round(t$conf.int[[2]],digits=4)`.
-
-### Número de amostras necessárias
-
-A potência do teste para as condições estabelecidas a fim de detectar uma diferença de $\delta^{*}=$ `r d_star` entre as hipóteses nula e alternativa foi estimada em `r round(p1$power*100,4)` %, dado $\alpha$ = `r alpha`  e desvio padrão calculado de `r round(dp,4)` .
-
-Para alcançar uma potência de $\beta = `r beta*100`$% seriam necessárias amostras de `r ceiling(ss$n)` rios. 
-
-##Verificação das premissas
+##ValidaÃ§Ã£o do modelo
 
 ###Normalidade
 
-A premissa de normalidade pode ser avaliada através do teste de Shapiro-Wilk. Utilizando as amostras obtidas, o resultado do teste foi um *p-valor* de `r round(normal$p.value,4)`, que indica que os dados seguem uma distribuição normal, como pode ser visto no gráfico.
+A premissa de normalidade pode ser avaliada atravÃ©s do teste de Shapiro-Wilk. Utilizando as amostras obtidas, o resultado do teste foi um *p-valor* de $`r round(normal$p.value,4)`$, que indica que os dados seguem uma distribuiÃ§Ã£o normal, como Ã© visualizado no grÃ¡fico Q-Q plot.
 
 ```{r, echo=FALSE}
 
@@ -162,12 +178,26 @@ qqPlot(diff_media$Difference,
        pch=16,
        cex=1.5,
        las=1,
-       ylab="Diferença entre medidas")
+       ylab="DiferenÃ§a entre medidas")
 
 ```
-###Independência
 
-Para avaliar a premissa de independência das variáveis foi realizado o teste de Durbin-Watson sobre a diferença entre as amostras obtidas acima e abaixo do local de despejo. O resultado foi um *p-valor* de `r round(indep$p.value,4)`, que prova a independência entre as amostras.
+###IndependÃªncia
 
-##Conclusão
+Para avaliar a premissa de independÃªncia das variÃ¡veis foi realizado o teste de Durbin-Watson sobre a diferenÃ§a entre as amostras obtidas acima e abaixo do local de despejo. O resultado foi um *p-valor* de $`r round(indep$p.value,4)`$, indicadito de que as amostras podem ser tomadas como independentes.
 
+## AnÃ¡lise EstatÃ­tica
+
+### Teste T
+Foi realizado um teste T pareado e o valor *t* observado de `r round(t$statistic,4)`, note que o valor Ã© negativo porque a mudanÃ§a mÃ©dia observada foi a reduÃ§Ã£o de espÃ©cies, fato corroborado pelo valor da mÃ©dia obtido, que foi de `r t$estimate`. O teste forneceu um *p-valor* de $`r round(t$p.value,4)`$ indicador que, para um nÃ­vel de confianÃ§a de `r (1-alpha)*100`%, a hipÃ³tese nula nÃ£o pode ser rejeitada.
+
+
+### NÃºmero de amostras necessÃ¡rias
+
+A potÃªncia do teste para as condiÃ§Ãµes estabelecidas a fim de detectar uma diferenÃ§a de $\delta^{*}=$ `r d_star` entre as hipÃ³teses nula e alternativa foi estimada em `r round(p1$power*100,4)` %, dado $\alpha$ = `r alpha`  e desvio padrÃ£o calculado de `r round(dp,4)` .
+
+Para alcanÃ§ar uma potÃªncia de $\beta = `r beta*100`$% no teste estatÃ­stico, seriam necessÃ¡rias amostras de `r ceiling(ss$n)` rios.
+
+
+##ConclusÃ£o
+Em uma anÃ¡lise exploratÃ³ria dos dados Ã© possÃ­vel identificar uma reduÃ§ao, ainda que pequena, no nÃºmero de espÃ©cies presentes nos rios examinados apÃ³s os pontos de despejo de esgoto, contudo, ao fim do teste estatÃ­stico, o pesquisador nÃ£o obteve confirmaÃ§Ã£o dessa hipÃ³tese, mas sim que nÃ£o havia diferenÃ§a entre o nÃºmero de espÃ©cies. Tal resultado pode ser explicado pela baixa potencia que o teste apresentou e a necessidade de se coletar mais amostras. Ã‰ importante ressaltar que hÃ¡ variÃ¡veis que nÃ£o foram contempladas devido as premissas assumidas e nÃ£o controlaveis. 
