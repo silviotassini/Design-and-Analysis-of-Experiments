@@ -1,0 +1,84 @@
+---
+title: "Estudo de Caso 04"
+author: "Alexandre Moraes Tannus e Sílvio R. Tassini Borges"
+output: pdf_document
+---
+```{r, prog,echo=FALSE,warning=FALSE, autodep=TRUE, message=FALSE }
+# 
+# if (!require(GGally, quietly = TRUE)){
+#       install.packages("GGally")
+#       }
+# if (!require(car, quietly = TRUE)){
+#       install.packages("car")
+#       }
+# if (!require(lsr, quietly = TRUE)){
+#       install.packages("lsr")
+#       }
+# if (!require(lmtest, quietly = TRUE)){
+#       install.packages("lmtest")
+#       }
+library(GGally,quietly = T, warn.conflicts = F) 
+library(car,quietly = T, warn.conflicts = F) 
+library(lsr,quietly = T, warn.conflicts = F) 
+library(lmtest, quietly = T, warn.conflicts = F)
+
+## Estudo de caso 04 
+
+alpha <- 0.05
+delta <- 0.25
+beta <- 0.20
+a = 4
+
+tau <- c(-3*delta/4,rep(delta/4,a-1))
+
+vartau = var(tau)
+
+dadosR1 <- read.csv("riser1.csv", header = T)
+
+sigma <- var(dadosR1$LogTTF)
+
+power <- power.anova.test(groups=4,
+                          between.var=vartau,
+                          within.var=sigma^2,
+                          sig.level=alpha,
+                          power=(1-beta))
+dados <- read.csv("allRisers.csv", header = T)
+
+
+```
+
+##Sumário
+
+Um fator importante na exploração de petróleo encontrado em superificies muito profundas é o transporte deste até a superfície. Para efetuar esse transporte são usados tubos, Risers, que obedecem determinada configuração capaz de suportar, dentre outras coisas, a pressão exercida pela coluna de água e desgate natural. Diante dessa situação um pesquisador deseja comparar os tubos disponíveis a fim de escolher aquele com a menor probabilidade de falhar no intervalo de 20 anos. Para tal trabalho o pesquisador decide que avaliar o tempo médio até ocorrer uma falha. 
+Atualmente existe um tubo com certa configuração padrão e o pesquisadro quer avaliar se as outras tres opções disponíveis têm um tempo médio até a falha maior que a atual.
+
+
+##Análise Exploratória dos dados
+
+
+## Planejamento Experimental
+
+
+
+##Validação do modelo
+
+###Normalidade
+
+
+
+###Independência
+
+
+
+## Análise Estatítica
+
+### Teste T
+
+
+
+### Número de amostras necessárias
+
+
+
+
+##Conclusão
