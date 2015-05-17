@@ -72,17 +72,22 @@ Atualmente existe um tubo com certa configuração padrão e o pesquisador quer 
 
 ### Número de amostras necessárias
 
-Considerando as especificaçõeses do pesquisador, tais como poder de teste superior a 80% e nível de significancia igual a 5%, foi calculado a necessidade de `r ceil(power$n)` observaçoes em cada novo *Riser*. Isto implica um custo adicional de `r power$n * 25000`.
+Considerando as especificaçõeses do pesquisador, tais como poder de teste superior a 80% e nível de significancia igual a 5%, foi calculado a necessidade de `r power$n` observaçoes em cada novo *Riser*. Isto implica um custo adicional de `r power$n`.
 
 ##Análise Exploratória dos dados
 Sumário dos dados coletados.
+
+Em uma primeira análise dos dados buscou-se veriricar se existia uma diferença significativa das médias entre os *Risers*.
+
 ```{r, echo=FALSE, fig.height=4, fig.width=4, fig.align='center'}
 
 mediaRisers
 sdRisers
 
 ```
-Verificando a mario e menor variância é preciso que se teste se a variancia maior é significativamente diferente da variancia menor. Se não for o caso então nenhuma das variancias é significantemnte diferente das outras.
+
+E verificar se a maior variancia é significantemente diferente da menor variancia. 
+Se não for o caso então nenhuma das variancias é significantemnte diferente das outras.
 
 
 ## Planejamento Experimental
