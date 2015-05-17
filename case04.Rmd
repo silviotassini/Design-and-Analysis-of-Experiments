@@ -68,6 +68,10 @@ attach(dados)
 mediaRisers <- tapply(dados$LogTTF, Riser, mean)
 sdRisers <- tapply(dados$LogTTF, Riser, sd)
 
+#independencia
+indep <- durbinWatsonTest(modelo)
+
+#normalidade
 ```
 
 ##Sumário
@@ -113,11 +117,11 @@ $$
 
 
 ###Independência
-
+Para avaliar a suposição de independência entre as observações foi realizado o teste de Durbin-Watson. O resultado foi um *p-valor* de $`r round(indep$p,4)`$, indicadivo de que as amostras podem ser tomadas como independentes.
 
 
 ## Análise Estatítica
-Foi realizado um teste estatístico *F* que forneceu  um *p-valor* de $`r round(t$p.value,4)`$ indicador que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula não pode ser rejeitada.
+Foi realizado um teste estatístico *F* que forneceu  um *p-valor* de $`r round(summary_model[[1]][[5]][1],4)`$ indicador que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula não pode ser rejeitada.
 
 
 
