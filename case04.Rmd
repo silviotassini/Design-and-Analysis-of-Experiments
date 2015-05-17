@@ -48,8 +48,6 @@ power <- power.anova.test(groups=4,
                           sig.level=alpha,
                           power=(1-beta))
 
-
-
 dados <- read.csv("allRisers.csv", header = T)
 dados$Riser <- as.factor(dados$Riser)
 dados$Riser <- relevel(dados$Riser, ref = "Riser1")
@@ -61,7 +59,7 @@ summary_model <- summary(modelo)
 tukeytest <- TukeyHSD(modelo)                      
 
 riser_1_dunnet <- glht(modelo, linfct = mcp(Riser = "Dunnet"))
-riser_1_CI <- confint(riser_1_dunnet, level = 0.95)
+riser_1_CI <- confint(riser_1_dunnet, level = 0.90)
 # para analise exploratoria
 
 attach(dados)
