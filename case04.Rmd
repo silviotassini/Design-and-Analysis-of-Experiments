@@ -70,6 +70,8 @@ sdRisers <- tapply(dados$LogTTF, Riser, sd)
 indep <- durbinWatsonTest(modelo)
 
 #normalidade
+normal <- tapply(dados$LogTTF, Riser, shapiro.test)
+
 ```
 
 ##Sumário
@@ -87,12 +89,9 @@ Sumário dos dados coletados.
 
 Em uma primeira análise dos dados buscou-se veriricar se existia uma diferença significativa das médias entre os *Risers*.
 
-```{r, echo=FALSE, fig.height=4, fig.width=4, fig.align='center'}
+```{r, echo=FALSE, fig.height=4, fig.width=4}
 
-mediaRisers
-sdRisers
-
-
+boxplot(dados$LogTTF~dados$Riser)
 ```
 
 E verificar se a maior variancia é significantemente diferente da menor variancia. 
@@ -112,6 +111,7 @@ $$
 ##Validação do modelo
 
 ###Normalidade
+A premissa de normalidade pode ser avaliada através do teste de Shapiro-Wilk. Utilizando as amostras obtidas para cada Riser, o resultado do teste não permite rejeitarmos a hipotese de normalidade para as amostras.
 
 
 ###Independência
