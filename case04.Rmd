@@ -42,22 +42,34 @@ power <- power.anova.test(groups=4,
                           within.var=sigma^2,
                           sig.level=alpha,
                           power=(1-beta))
+
 dados <- read.csv("allRisers.csv", header = T)
+dados$Riser <- factor(dados$Riser)
+dados$Riser <- relevel(dados$Riser, ref = "Riser1")
 
+modelo <- aov(LogTTF~Riser, data = dados)
 
+                      
 ```
 
 ##Sumário
 
 Um fator importante na exploração de petróleo encontrado em superificies muito profundas é o transporte deste até a superfície. Para efetuar esse transporte são usados tubos, Risers, que obedecem determinada configuração capaz de suportar, dentre outras coisas, a pressão exercida pela coluna de água e desgate natural. Diante dessa situação um pesquisador deseja comparar os tubos disponíveis a fim de escolher aquele com a menor probabilidade de falhar no intervalo de 20 anos. Para tal trabalho o pesquisador decide que avaliar o tempo médio até ocorrer uma falha. 
-Atualmente existe um tubo com certa configuração padrão e o pesquisadro quer avaliar se as outras tres opções disponíveis têm um tempo médio até a falha maior que a atual.
+Atualmente existe um tubo com certa configuração padrão e o pesquisador quer avaliar se as outras tres opções disponíveis têm um tempo médio até a falha maior que a atual.
 
+
+### Número de amostras necessárias
+
+Considerando as especificaçõeses do pesquisador, tais como poder de teste superior a 80% e nível de significancia igual a 5%, foi calculado a necessidade de `r power$n` observaçoes em cada novo *Riser*. Isto implica um custo adicional de `r round(power$n * 25000)`.
 
 ##Análise Exploratória dos dados
+Sumário dos dados coletados.
+```{r, echo=FALSE, fig.height=4, fig.width=4, fig.align='center'}
 
 
+```
 ## Planejamento Experimental
-
+O pesquisador esta interessado em saber se h'a um *Riser* melhor que o utilizado atualmente, para responder a pergunta de interesse o pesquisador primeiramente calculou o número de observações que seriam necessárias para conseguir responder com a confiança determinada. Nesse ponto é necessário pesar o custo de cada observação e se o valor final esta de acordo com a previsão da empresa. Feito as observaçÕes, seguiu para análise 
 
 
 ##Validação do modelo
@@ -76,7 +88,7 @@ Atualmente existe um tubo com certa configuração padrão e o pesquisadro quer 
 
 
 
-### Número de amostras necessárias
+
 
 
 
