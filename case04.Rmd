@@ -29,7 +29,7 @@ library(multcomp, quietly=T, warn.conflicts = F)
 
 ## Estudo de caso 04 
 
-alpha <- 0.05
+alpha <- 0.1
 delta <- 0.25
 beta <- 0.20
 a = 4
@@ -48,15 +48,21 @@ power <- power.anova.test(groups=4,
                           sig.level=alpha,
                           power=(1-beta))
 
+
+
 dados <- read.csv("allRisers.csv", header = T)
 dados$Riser <- as.factor(dados$Riser)
 dados$Riser <- relevel(dados$Riser, ref = "Riser1")
 
 modelo <- aov(LogTTF~Riser, data = dados)
 
+summary_model <- summary(modelo)
+
 tukeytest <- TukeyHSD(modelo)                      
 
-# ara analise exploratoria
+riser_1_dunnet <- glht(modelo, linfct = mcp(Riser = "Dunnet"))
+riser_1_CI <- confint(riser_1_dunnet, level = 0.95)
+# para analise exploratoria
 
 attach(dados)
 mediaRisers <- tapply(dados$LogTTF, Riser, mean)
@@ -72,7 +78,7 @@ Atualmente existe um tubo com certa configuração padrão e o pesquisador quer 
 
 ### Número de amostras necessárias
 
-Considerando as especificaçõeses do pesquisador, tais como poder de teste superior a 80% e nível de significancia igual a 5%, foi calculado a necessidade de `r power$n` observaçoes em cada novo *Riser*. Isto implica um custo adicional de `r power$n`.
+Considerando as especificaçõeses do pesquisador, tais como poder de teste superior a 80% e nível de significancia igual a 5%, foi calculado a necessidade de `r ceiling(power$n)` observaçoes em cada novo *Riser*. Isto implica um custo adicional de `r round(ceiling(power$n),2)`.
 
 ##Análise Exploratória dos dados
 Sumário dos dados coletados.
@@ -83,6 +89,7 @@ Em uma primeira análise dos dados buscou-se veriricar se existia uma diferença
 
 mediaRisers
 sdRisers
+
 
 ```
 
@@ -110,6 +117,7 @@ $$
 
 
 ## Análise Estatítica
+Foi realizado um teste estatístico *F* que forneceu  um *p-valor* de $`r round(t$p.value,4)`$ indicador que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula não pode ser rejeitada.
 
 
 
