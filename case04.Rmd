@@ -17,10 +17,15 @@ output: pdf_document
 # if (!require(lmtest, quietly = TRUE)){
 #       install.packages("lmtest")
 #       }
+
+
+  
 library(GGally,quietly = T, warn.conflicts = F) 
 library(car,quietly = T, warn.conflicts = F) 
 library(lsr,quietly = T, warn.conflicts = F) 
 library(lmtest, quietly = T, warn.conflicts = F)
+library(multcomp, quietly=T, warn.conflicts = F)
+
 
 ## Estudo de caso 04 
 
@@ -44,12 +49,19 @@ power <- power.anova.test(groups=4,
                           power=(1-beta))
 
 dados <- read.csv("allRisers.csv", header = T)
-dados$Riser <- factor(dados$Riser)
+dados$Riser <- as.factor(dados$Riser)
 dados$Riser <- relevel(dados$Riser, ref = "Riser1")
 
 modelo <- aov(LogTTF~Riser, data = dados)
 
-                      
+tukeytest <- TukeyHSD(modelo)                      
+
+# ara analise exploratoria
+
+attach(dados)
+mediaRisers <- tapply(dados$LogTTF, Riser, mean)
+sdRisers <- tapply(dados$LogTTF, Riser, sd)
+
 ```
 
 ##Sumário
@@ -60,22 +72,32 @@ Atualmente existe um tubo com certa configuração padrão e o pesquisador quer 
 
 ### Número de amostras necessárias
 
-Considerando as especificaçõeses do pesquisador, tais como poder de teste superior a 80% e nível de significancia igual a 5%, foi calculado a necessidade de `r power$n` observaçoes em cada novo *Riser*. Isto implica um custo adicional de `r round(power$n * 25000)`.
+Considerando as especificaçõeses do pesquisador, tais como poder de teste superior a 80% e nível de significancia igual a 5%, foi calculado a necessidade de `r ceil(power$n)` observaçoes em cada novo *Riser*. Isto implica um custo adicional de `r power$n * 25000`.
 
 ##Análise Exploratória dos dados
 Sumário dos dados coletados.
 ```{r, echo=FALSE, fig.height=4, fig.width=4, fig.align='center'}
 
+mediaRisers
+sdRisers
 
 ```
-## Planejamento Experimental
-O pesquisador esta interessado em saber se h'a um *Riser* melhor que o utilizado atualmente, para responder a pergunta de interesse o pesquisador primeiramente calculou o número de observações que seriam necessárias para conseguir responder com a confiança determinada. Nesse ponto é necessário pesar o custo de cada observação e se o valor final esta de acordo com a previsão da empresa. Feito as observaçÕes, seguiu para análise 
+Verificando a mario e menor variância é preciso que se teste se a variancia maior é significativamente diferente da variancia menor. Se não for o caso então nenhuma das variancias é significantemnte diferente das outras.
 
+
+## Planejamento Experimental
+O pesquisador esta interessado em saber se h'a um *Riser* melhor que o utilizado atualmente, para responder a pergunta de interesse o pesquisador primeiramente calculou o número de observações que seriam necessárias para conseguir responder com a confiança determinada. Nesse ponto é necessário pesar o custo de cada observação e se o valor final esta de acordo com a previsão da empresa. A fim de realizar os testes estatísticos o pesquisador feiniu suas hipóteses:
+
+$$
+\begin{cases}
+  H_0: & \tau_{i} = 0 \\ 
+  H_1: & \exists \tau_{i} \neq 0
+\end{cases}
+$$
 
 ##Validação do modelo
 
 ###Normalidade
-
 
 
 ###Independência
@@ -83,13 +105,6 @@ O pesquisador esta interessado em saber se h'a um *Riser* melhor que o utilizado
 
 
 ## Análise Estatítica
-
-### Teste T
-
-
-
-
-
 
 
 
