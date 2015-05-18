@@ -53,6 +53,9 @@ custo <- ceiling(power$n) *25000 * 4 - 250000
   
 dados <- read.csv("1976-08-31_43_43_43_43.csv", header=T)
 
+mean_risers <- aggregate(dados$LogTTF~dados$Riser, FUN = mean)
+var_risers <- aggregate(dados$LogTTF~dados$Riser, FUN = mean)
+
 levels(dados$Riser) = c("R1","R2", "R3","R4")
 
 dados$Riser <- as.factor(dados$Riser)
@@ -93,17 +96,15 @@ Atualmente existe um tubo com certa configuração padrão e o pesquisador quer 
 Considerando as especificaçõeses do pesquisador, tais como poder de teste superior a 80% e nível de significancia igual a 10%, foi calculado a necessidade de `r ceiling(power$n)` observaçoes em cada novo *Riser*. Isto implica um custo adicional de $`r format(custo, scientifica=FALSE)`.
 
 ##Análise Exploratória dos dados
-Sumário dos dados coletados.
 
-Em uma primeira análise dos dados buscou-se verificar se existia uma diferença significativa das médias entre os *Risers*.
+Em uma análise prévia dos dados é possível notar que as médias de todos os *Risers* são próximas, sendo a menor igual a `r round(min(mean_risers[,2]),4)` e a maior igual a `r round(max(mean_risers[,2]),4)` com variâncias entre `r round(min(var_risers[,2]),4)` e `r round(max(var_risers[,2]),4)`, conforme mostra o *boxplot*.
+
+Utilizando testes estatísticos é possível determinar se estas variâncias possuem diferenças significativas que possam sugerir que um método é superior a outro.
 
 ```{r, echo=FALSE, fig.height=4, fig.width=4}
 
 boxplot(dados$LogTTF~dados$Riser)
 ```
-
-E verificar se a maior variancia é significantemente diferente da menor variancia. 
-Se não for o caso então nenhuma das variancias é significantemnte diferente das outras.
 
 
 ## Planejamento Experimental
@@ -140,5 +141,5 @@ plot(riser_1_CI, xlab= "Tempo médio ate falha", cex.axis= 1.2,  cex= 2)
 ```
 
 ##Conclusão
-Concluindo a análise estatística o pesquisador não obteve  evidências que permitissem escolher um *Riser* em detrimento de outro. Não foram detectads diferenças siginificantes entre as médias dos tempo de falha entre os  quatro métodos. Destaca que a desigualdade de variâncias entre as amostras coletadas em cada Riser apontada pelo teste *Fligner-Killeen* tem seu efeito negativo reduzido devido ao tamanho amostral dos grupos serem iguais.
+Concluindo a análise estatística o pesquisador não obteve  evidências que permitissem escolher um *Riser* em detrimento de outro. Não foram detectadas diferenças siginificativas entre as médias dos tempos de falha entre os quatro métodos avaliados. É importante ressaltar que a desigualdade de variâncias entre as amostras coletadas em cada Riser apontada pelo teste *Fligner-Killeen* tem seu efeito negativo reduzido devido ao tamanho amostral dos grupos serem iguais.
 
