@@ -51,9 +51,12 @@ power <- power.anova.test(groups=4,
 
 custo <- ceiling(power$n) *25000 * 4 - 250000
   
-dados <- read.csv("1976-08-31_43_43_43_43.csv", header = T)
+dados <- read.csv("1976-08-31_43_43_43_43.csv", header=T)
+
+levels(dados$Riser) = c("R1","R2", "R3","R4")
+
 dados$Riser <- as.factor(dados$Riser)
-dados$Riser <- relevel(dados$Riser, ref = "Riser1")
+dados$Riser <- relevel(dados$Riser, ref = "R1")
 
 modelo <- aov(LogTTF~Riser, data = dados)
 
@@ -118,10 +121,10 @@ A hipótese nula é de que não há *Riser* com tempo médio de falha melhor que
 ##Validação do modelo
 
 ###Homocedasticidade
-
+Efetuou-se o teste de *Fligner-Killeen* para avaliar se a variância em cada grupo era a mesma, contudo o resultado do referido teste resultou em um *valor-p* igual a `r round(hmcd$p.value,4)` que permite rejeitar a premissa de igualdade de variancias.
 
 ###Normalidade
-A premissa de normalidade pode ser avaliada através do teste de Shapiro-Wilk. Utilizando as amostras obtidas para cada Riser, o resultado do teste não permite rejeitarmos a hipotese de normalidade para as amostras.
+A premissa de normalidade pode ser avaliada através do teste de *Shapiro-Wilk*. Utilizando as amostras obtidas para cada Riser, o resultado do teste não permite rejeitarmos a hipotese de normalidade para as amostras.
 
 
 ###Independência
@@ -131,7 +134,11 @@ Para avaliar a suposição de independência entre as observações foi realizad
 ## Análise Estatítica
 Foi realizado um teste estatístico *F* que forneceu  um *p-valor* de $`r round(summary_model[[1]][[5]][1],4)`$ indicador que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula não pode ser rejeitada.
 
+```{r, echo=FALSE, fig.height=5, fig.width=5, fig.align='center'}
+
+plot(riser_1_CI, xlab= "Tempo médio ate falha", cex.axis= 1.2,  cex= 2)
+```
 
 ##Conclusão
-
+Concluindo a análise estatística o pesquisador não obteve  evidências que permitissem escolher um *Riser* em detrimento de outro. Não foram detectads diferenças siginificantes entre as médias dos tempo de falha entre os  quatro métodos. Destaca que a desigualdade de variâncias entre as amostras coletadas em cada Riser apontada pelo teste *Fligner-Killeen* tem seu efeito negativo reduzido devido ao tamanho amostral dos grupos serem iguais.
 
