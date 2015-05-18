@@ -40,7 +40,7 @@ vartau = var(tau)
 
 dadosR1 <- read.csv("riser1.csv", header = T)
 
-sigma <- var(dadosR1$LogTTF)
+sigma <- sd(dadosR1$LogTTF)
 
 power <- power.anova.test(groups=4,
                           between.var=vartau,
@@ -48,7 +48,10 @@ power <- power.anova.test(groups=4,
                           sig.level=alpha,
                           power=(1-beta))
 
-dados <- read.csv("allRisers.csv", header = T)
+
+custo <- ceiling(power$n) *25000 * 4 - 250000
+  
+dados <- read.csv("1976-08-31_43_43_43_43.csv", header = T)
 dados$Riser <- as.factor(dados$Riser)
 dados$Riser <- relevel(dados$Riser, ref = "Riser1")
 
@@ -72,6 +75,8 @@ indep <- durbinWatsonTest(modelo)
 #normalidade
 normal <- tapply(dados$LogTTF, Riser, shapiro.test)
 
+#homocedasticidade
+hmcd <- fligner.test(LogTTF~Riser, data=dados)
 ```
 
 ##Sumário
@@ -82,12 +87,12 @@ Atualmente existe um tubo com certa configuração padrão e o pesquisador quer 
 
 ### Número de amostras necessárias
 
-Considerando as especificaçõeses do pesquisador, tais como poder de teste superior a 80% e nível de significancia igual a 5%, foi calculado a necessidade de `r ceiling(power$n)` observaçoes em cada novo *Riser*. Isto implica um custo adicional de `r round(ceiling(power$n),2)`.
+Considerando as especificaçõeses do pesquisador, tais como poder de teste superior a 80% e nível de significancia igual a 10%, foi calculado a necessidade de `r ceiling(power$n)` observaçoes em cada novo *Riser*. Isto implica um custo adicional de $`r format(custo, scientifica=FALSE)`.
 
 ##Análise Exploratória dos dados
 Sumário dos dados coletados.
 
-Em uma primeira análise dos dados buscou-se veriricar se existia uma diferença significativa das médias entre os *Risers*.
+Em uma primeira análise dos dados buscou-se verificar se existia uma diferença significativa das médias entre os *Risers*.
 
 ```{r, echo=FALSE, fig.height=4, fig.width=4}
 
@@ -99,7 +104,7 @@ Se não for o caso então nenhuma das variancias é significantemnte diferente d
 
 
 ## Planejamento Experimental
-O pesquisador esta interessado em saber se h'a um *Riser* melhor que o utilizado atualmente, para responder a pergunta de interesse o pesquisador primeiramente calculou o número de observações que seriam necessárias para conseguir responder com a confiança determinada. Nesse ponto é necessário pesar o custo de cada observação e se o valor final esta de acordo com a previsão da empresa. A fim de realizar os testes estatísticos o pesquisador feiniu suas hipóteses:
+O pesquisador esta interessado em saber se há um *Riser* melhor que o utilizado atualmente, para responder a pergunta de interesse o pesquisador primeiramente calculou o número de observações que seriam necessárias para conseguir responder com a confiança determinada. Nesse ponto é necessário pesar o custo de cada observação e se o valor final esta de acordo com a previsão da empresa. A fim de realizar os testes estatísticos o pesquisador definiu suas hipóteses:
 
 $$
 \begin{cases}
@@ -108,7 +113,12 @@ $$
 \end{cases}
 $$
 
+A hipótese nula é de que não há *Riser* com tempo médio de falha melhor que o atualmene em utilização.
+
 ##Validação do modelo
+
+###Homocedasticidade
+
 
 ###Normalidade
 A premissa de normalidade pode ser avaliada através do teste de Shapiro-Wilk. Utilizando as amostras obtidas para cada Riser, o resultado do teste não permite rejeitarmos a hipotese de normalidade para as amostras.
@@ -122,5 +132,6 @@ Para avaliar a suposição de independência entre as observações foi realizad
 Foi realizado um teste estatístico *F* que forneceu  um *p-valor* de $`r round(summary_model[[1]][[5]][1],4)`$ indicador que, para um nível de confiança de `r (1-alpha)*100`%, a hipótese nula não pode ser rejeitada.
 
 
-
 ##Conclusão
+
+
